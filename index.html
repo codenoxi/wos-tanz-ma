@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Wos tanz ma?</title>
+  <meta name="description" content="Hör rein und errate, welcher Tanz dazu passt.">
+  <meta name="theme-color" content="#3b1f4a">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💃</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand">Wos tanz ma?</h1>
+    <div class="badges">
+      <span class="badge" id="dayStreak" title="Tage in Folge gespielt">🔥 0</span>
+      <span class="badge" id="xp" title="Erfahrungspunkte">⭐ 0</span>
+      <button class="icon-btn" id="statsBtn" aria-label="Fortschritt und Einstellungen">📊</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Startbildschirm -->
+    <section id="startView" class="view">
+      <div class="card hero">
+        <div class="hero-emoji">💃🕺</div>
+        <h2>Hör rein – welcher Tanz passt?</h2>
+        <p>Pro Lektion 10 Songs. Tänze, die dir schwerfallen, kommen öfter dran.</p>
+        <div class="daygoal">
+          <div class="daygoal-label"><span>Tagesziel</span><span id="dayGoalText">0 / 20 Songs</span></div>
+          <div class="bar"><div class="bar-fill" id="dayGoalBar"></div></div>
+        </div>
+        <button class="btn primary big" id="startBtn">Lektion starten</button>
+      </div>
+    </section>
+
+    <!-- Quiz -->
+    <section id="quizView" class="view" hidden>
+      <div class="lesson-progress">
+        <button class="icon-btn" id="quitBtn" aria-label="Lektion beenden">✕</button>
+        <div class="bar"><div class="bar-fill" id="lessonBar"></div></div>
+        <span class="combo" id="combo" hidden></span>
+      </div>
+
+      <div class="card player">
+        <button class="play" id="playBtn" aria-label="Abspielen">
+          <svg viewBox="0 0 100 100" class="ring" aria-hidden="true">
+            <circle cx="50" cy="50" r="45" class="ring-bg"/>
+            <circle cx="50" cy="50" r="45" class="ring-fg" id="ring"/>
+          </svg>
+          <span class="play-icon" id="playIcon">▶</span>
+        </button>
+        <div class="song" id="song">
+          <div class="song-hidden">🎵 Welcher Tanz ist das?</div>
+        </div>
+      </div>
+
+      <div class="choices" id="choices"></div>
+
+      <div class="feedback" id="feedback" hidden>
+        <div class="feedback-title" id="feedbackTitle"></div>
+        <div class="feedback-tip" id="feedbackTip"></div>
+        <button class="btn primary big" id="nextBtn">Weiter</button>
+      </div>
+    </section>
+
+    <!-- Lektionsende -->
+    <section id="doneView" class="view" hidden>
+      <div class="card hero">
+        <div class="hero-emoji" id="doneEmoji">🎉</div>
+        <h2 id="doneTitle">Lektion geschafft!</h2>
+        <div class="done-stats">
+          <div><strong id="doneScore">0/10</strong><span>richtig</span></div>
+          <div><strong id="doneXp">+0</strong><span>XP</span></div>
+          <div><strong id="doneCombo">0</strong><span>beste Serie</span></div>
+        </div>
+        <p id="doneHint"></p>
+        <button class="btn primary big" id="againBtn">Nächste Lektion</button>
+        <button class="btn ghost" id="homeBtn">Zur Übersicht</button>
+      </div>
+    </section>
+
+    <!-- Fortschritt & Einstellungen -->
+    <section id="statsView" class="view" hidden>
+      <div class="card">
+        <div class="card-head">
+          <h2>Dein Fortschritt</h2>
+          <button class="icon-btn" id="closeStatsBtn" aria-label="Schließen">✕</button>
+        </div>
+        <p class="muted">Stufe 0–5 je Tanz. Falsche Antworten werfen einen Tanz zurück, dann kommt er öfter dran.</p>
+        <div id="styleStats" class="style-stats"></div>
+      </div>
+
+      <div class="card">
+        <h2>Häufigste Verwechslungen</h2>
+        <div id="confusions" class="confusions"></div>
+      </div>
+
+      <div class="card">
+        <h2>Einstellungen</h2>
+        <label class="setting">
+          <span>Antwortmöglichkeiten</span>
+          <select id="choiceCount">
+            <option value="4">4 (leicht)</option>
+            <option value="6">6 (mittel)</option>
+            <option value="0">alle (Profi)</option>
+          </select>
+        </label>
+        <div class="setting-label">Diese Tänze üben</div>
+        <div id="styleToggles" class="style-toggles"></div>
+        <button class="btn danger" id="resetBtn">Fortschritt zurücksetzen</button>
+        <p class="muted small" id="dataInfo"></p>
+      </div>
+    </section>
+  </main>
+
+  <audio id="audio" preload="auto"></audio>
+
+  <script src="data/tracks.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
