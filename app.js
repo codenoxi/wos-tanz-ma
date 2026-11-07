@@ -24,6 +24,7 @@
     'samba': '2/4-Takt, ca. 50–52 Takte/Min. Brasilianisch, federnd, viel Percussion („Bounce“).',
     'mambo': '4/4-Takt, flotter Latin-Party-Rhythmus. Schneller und treibender als Cha-Cha, oft mit Bläsern.',
     'jive': '4/4-Takt, ca. 42–44 Takte/Min. Rock ’n’ Roll und Swing, sehr energiegeladen.',
+    'boogie': '4/4-Takt, Rock ’n’ Roll und Boogie-Woogie, oft mit rollendem Klavier-Bass. Klingt ähnlich wie Jive – viele Klassiker passen zu beiden.',
     'paso-doble': '2/4-Takt, ca. 60–62 Takte/Min. Spanischer Marsch, dramatisch, Stierkampf-Stimmung.',
     'polka': '2/4-Takt, schnell und hüpfend. Blasmusik, „um-pa um-pa“.',
     'boarischer': '2/4- bzw. 4/4-Takt, gemütlicher als die Polka. Volksmusik, „Hupf“ auf jedem zweiten Schritt.',
@@ -34,6 +35,7 @@
     ['langsamer-walzer', 'wiener-walzer'],
     ['tango', 'paso-doble'],
     ['quickstep', 'jive', 'discofox'],
+    ['jive', 'boogie', 'quickstep'],
     ['cha-cha-cha', 'rumba', 'mambo', 'samba'],
     ['polka', 'boarischer', 'paso-doble'],
     ['discofox', 'cha-cha-cha'],
@@ -53,7 +55,7 @@
     styles: {},   // stil-id -> {box, right, wrong, last}
     tracks: {},   // track-id -> {last, right, wrong}
     conf: {},     // richtig-id -> {getippt-id: anzahl}
-    retry: [],    // falsch beantwortete Songs: {t: track-id, s: stil-index, due: runde}
+    retry: [],    // falsch beantwortete Songs: {t: track-id, s: stil-id, due: runde}
     day: { date: null, count: 0, streak: 0 },
     settings: { choices: 4, disabled: [] },
   });
@@ -65,6 +67,8 @@
       if (raw) {
         const s = Object.assign(defaultState(), JSON.parse(raw));
         s.settings = Object.assign(defaultState().settings, s.settings);
+        // ältere Version speicherte den Stil als Nummer – die passt nach neuen Tänzen nicht mehr
+        s.retry = (s.retry || []).filter(r => typeof r.s === 'string' && r.s in styleIndex);
         return s;
       }
     } catch (e) { /* privates Fenster o. Ä. */ }
@@ -106,11 +110,14 @@
     const enabled = enabledStyles();
 
     // 1. Falsch beantwortete Songs kommen ein paar Runden später nochmal
-    const dueIdx = state.retry.findIndex(r => r.due <= state.round && enabled.includes(r.s) && r.s !== lastStyle);
+    const dueIdx = state.retry.findIndex(r => {
+      const si = styleIndex[r.s];
+      return r.due <= state.round && enabled.includes(si) && si !== lastStyle;
+    });
     if (dueIdx >= 0) {
       const r = state.retry.splice(dueIdx, 1)[0];
       const ti = TRACKS.findIndex(t => t.i === r.t);
-      if (ti >= 0 && !badTracks.has(ti)) return { track: TRACKS[ti], style: r.s, retry: true };
+      if (ti >= 0 && !badTracks.has(ti)) return { track: TRACKS[ti], style: styleIndex[r.s], retry: true };
     }
 
     // 2. Tanzstil nach Lernstufe gewichtet ziehen (schwache Tänze öfter)
@@ -247,7 +254,7 @@
       const c = (state.conf[styleId] ||= {});
       c[guessId] = (c[guessId] || 0) + 1;
       if (!current.retry) {
-        state.retry.push({ t: track.i, s: style, due: state.round + 3 + rand(3) });
+        state.retry.push({ t: track.i, s: styleId, due: state.round + 3 + rand(3) });
         state.retry = state.retry.slice(-10);
       }
       lesson.wrongStyles[style] = (lesson.wrongStyles[style] || 0) + 1;

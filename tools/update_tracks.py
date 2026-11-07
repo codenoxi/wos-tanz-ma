@@ -24,6 +24,7 @@ STYLES = [
     ("samba", "Samba", "2IDfUFAobdlMLz8Uw5AdAP"),
     ("mambo", "Mambo", "3vvsU64KNx1cRPFY6YjLsh"),
     ("jive", "Jive", "3xpgxEeZCpmRdbmkMDnabD"),
+    ("boogie", "Boogie", "75r1DrNIbRqcM8FmU5aSTK"),
     ("paso-doble", "Paso Doble", "2iyz3cyXkLcEs7urY9yMS7"),
     ("polka", "Polka", "7HgPsC6wOGSPVxU7NC8bKh"),
     ("boarischer", "Boarischer", "4n9y3xN2xZY9h6eHflLOq1"),
